@@ -1,6 +1,8 @@
 <?php
 require_once("./Controllers/administradorController.php");
 
+
+//Index prueba
 $adminCtrl = new AdministradorController();
 $parametros = explode("/", $_SERVER["REQUEST_URI"]);
 
