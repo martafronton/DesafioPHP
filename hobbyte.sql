@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-10-2025 a las 21:09:03
+-- Tiempo de generación: 07-10-2025 a las 20:04:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -67,6 +67,18 @@ CREATE TABLE `personaje` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `personaje_partida`
+--
+
+CREATE TABLE `personaje_partida` (
+  `id_personaje_partida` int(11) NOT NULL,
+  `id_personaje` int(11) NOT NULL,
+  `id_partida` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `rol`
 --
 
@@ -88,6 +100,13 @@ CREATE TABLE `usuario` (
   `contrasena` varchar(255) NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `email`, `contrasena`, `fecha_registro`) VALUES
+(1, 'marta', 'marta@example.com', '81dc9bdb52d04dc20036dbd8313ed055', '2025-10-06 04:37:34');
 
 -- --------------------------------------------------------
 
@@ -124,6 +143,14 @@ ALTER TABLE `partida`
 ALTER TABLE `personaje`
   ADD PRIMARY KEY (`id_personaje`),
   ADD UNIQUE KEY `nombre` (`nombre`);
+
+--
+-- Indices de la tabla `personaje_partida`
+--
+ALTER TABLE `personaje_partida`
+  ADD PRIMARY KEY (`id_personaje_partida`),
+  ADD KEY `id_personaje` (`id_personaje`),
+  ADD KEY `id_partida` (`id_partida`);
 
 --
 -- Indices de la tabla `rol`
@@ -169,6 +196,12 @@ ALTER TABLE `personaje`
   MODIFY `id_personaje` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `personaje_partida`
+--
+ALTER TABLE `personaje_partida`
+  MODIFY `id_personaje_partida` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -178,7 +211,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
@@ -195,6 +228,13 @@ ALTER TABLE `casilla`
 --
 ALTER TABLE `partida`
   ADD CONSTRAINT `partida_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `personaje_partida`
+--
+ALTER TABLE `personaje_partida`
+  ADD CONSTRAINT `personaje_partida_ibfk_1` FOREIGN KEY (`id_personaje`) REFERENCES `personaje` (`id_personaje`) ON DELETE CASCADE,
+  ADD CONSTRAINT `personaje_partida_ibfk_2` FOREIGN KEY (`id_partida`) REFERENCES `partida` (`id_partida`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `usuario_rol`
