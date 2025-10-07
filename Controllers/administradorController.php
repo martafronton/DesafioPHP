@@ -22,7 +22,7 @@ class AdministradorController {
 
     public function insertarUsuario() {
         $data = json_decode(file_get_contents("php://input"), true);
-        $id = $this->usuarioDAO->insertUsuario($data["nombre"], $data["correo"], md5($data["contrasena"]));
+        $id = $this->usuarioDAO->insertUsuario($data["nombre"], $data["email"], md5($data["passwd"]));
         echo json_encode(["Insertado correctamente" => $id]);
     }
     

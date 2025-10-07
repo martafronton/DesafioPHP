@@ -44,10 +44,10 @@ class UsuarioDAO {
     
 
 
-    public static function insertUsuario($nombre, $correo, $passwd) {
+    public static function insertUsuario($nombre, $email, $passwd) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("INSERT INTO usuario(nombre, email, contrasena) VALUES(?, ?, ?)");
-        $stmt->bind_param("sss", $nombre, $correo, $passwd);
+        $stmt->bind_param("sss", $nombre, $email, $passwd);
         $stmt->execute();
         $id = $stmt->insert_id;
 
