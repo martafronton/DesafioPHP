@@ -2,15 +2,16 @@
 class Partida {
     private $id;
     private $idUsuario;
+    private $tipo;
     private $estado; 
     private $fechaInicio;
     private $fechaFin;
-    private $tablero; 
     private $heroes;  
 
-    public function __construct($id, $idUsuario, $estado, $fechaInicio, $fechaFin, $tablero) {
+    public function __construct($id, $idUsuario, $tipo, $estado, $fechaInicio, $fechaFin, $tablero) {
         $this->id = $id;
         $this->idUsuario = $idUsuario;
+        $this->tipo = $tipo;
         $this->estado = $estado;
         $this->fechaInicio = $fechaInicio;
         $this->fechaFin = $fechaFin;
