@@ -20,10 +20,18 @@ class AdministradorController {
     }
 
 
-    public function insertarUsuario() {
-        $data = json_decode(file_get_contents("php://input"), true);
-        $id = $this->usuarioDAO->insertUsuario($data["nombre"], $data["email"], md5($data["passwd"]));
-        echo json_encode(["Insertado correctamente" => $id]);
+    public function insertarUsuario($rol, $nombre, $email, $passwd) {
+        return $this->usuarioDAO->insertUsuario($rol, $nombre, $email, md5($passwd));
+    }
+    
+    public function esAdmin($email, $passwd){
+        return $this->usuarioDAO->esAdmin($email, $passwd);
+    }
+    public function borrarUsuario($id){
+        $usuario = $this->usuarioDAO->deleteUsuario($id);
+        echo $usuario
+            ? json_encode(["mensaje" => "Usuario borrado correctamente"])
+            : json_encode(["error" => "No se ha podido borrar al usuario"]);
     }
     
 }
