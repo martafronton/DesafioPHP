@@ -19,6 +19,7 @@ class Partida {
         $this->heroes = [];
     }
 
+    
 
     /**
      * Get the value of id
