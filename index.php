@@ -64,25 +64,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
     } elseif (($parametros[1] ?? '') === "partida") {
-        if (!isset($d["id_usuario"]) || !isset($d["tipo"])) {
+        $usuario = $d["usuario"] ?? null;
+        $partida = $d["partida"] ?? null;
+    
+        if (!$usuario || !$partida) {
             echo json_encode(["error" => "Faltan parámetros obligatorios"]);
             exit;
         }
-        $id_usuario = $d["id_usuario"];
-        $tipo = $d["tipo"];
-        $id_partida = $partidaCtrl->crearPartida($id_usuario, $tipo);
-        echo json_encode([
-            "mensaje" => "Partida creada correctamente",
-            "id_partida" => $id_partida
-        ]);
+    
+        $email = $usuario["email"] ?? null;
+        $passwd = $usuario["passwd"] ?? null;
+        $tipo = $partida["tipo"] ?? null;
+        $tamanio = $partida["tamanio"] ?? 20;
+    
+        if (!$email || !$passwd || !$tipo) {
+            echo json_encode(["error" => "Faltan datos para crear la partida"]);
+            exit;
+        }
+    
+        $id_partida = $partidaCtrl->crearPartida($email, $passwd, $tipo, $tamanio);
+    
         exit;
 
     } elseif (($parametros[1] ?? '') === "destapar") {
-        $id_partida = $d["id_partida"] ?? null;
-        $posicion = $d["posicion"] ?? null;
+        $usuario = $d["usuario"];
+        $movimiento = $d["movimiento"];
+        $email= $usuario["email"];
+        $passwd= $usuario["passwd"];
+        $id_partida = $movimiento["id_partida"];
+        $posicion = $movimiento["posicion"];
 
-        if ($id_partida && $posicion !== null) {
-            echo $partidaCtrl->destaparCasilla($id_partida, $posicion);
+        if ($id_partida !== null && $posicion !== null && $movimiento !== null && $email !== null && $passwd !== null) {
+            echo $partidaCtrl->destaparCasilla($email, $paswd,$id_partida, $posicion);
         } else {
             echo json_encode(["error" => "Faltan parámetros para destapar la casilla"]);
         }
@@ -96,6 +109,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             echo $partidaCtrl->rendirse($email, $passwd, $id_partida);
         } else {
             echo json_encode(["error" => "Faltan parámetros para rendirte"]);
+        }
+        exit;
+    }
+}elseif($_SERVER["REQUEST_METHOD"] === "GET") {
+    if (($parametros[1] ?? '') === "partida" && count($parametros)==2) {
+        $email = $d["email"] ?? null;
+        $passwd = $d["passwd"] ?? null;
+        $id_partida = intval($parametros[2]);
+
+        if ($email && $passwd) {
+            echo $partidaCtrl->mostrarPartida($id_partida, $email, $passwd);
+        } else {
+            echo json_encode(["error" => "Faltan parámetros para mostrar la partida"]);
         }
         exit;
     }

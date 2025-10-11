@@ -1,30 +1,54 @@
 <?php
 require_once("./Database/conexion.php");
+require_once("./Models/personaje.php");
 
 class PartidaDAO {
 
-    public static function insertPartida($id_usuario, $tipo, $numCasillas = 20) {
-        $conexion = ConexionBBDD::connect();
-
+    public static function insertPartida($email, $passwd, $tipo, $numCasillas) {
+        $conexion = ConexionBBDD::connect();     
+        $id_usuario = self::validarUsuario($email, $passwd);
         $stmt = $conexion->prepare("INSERT INTO partida (id_usuario, tipo) VALUES (?, ?)");
         $stmt->bind_param("is", $id_usuario, $tipo);
         $stmt->execute();
         $id_partida = $stmt->insert_id;
-
         $stmt->close();
 
+        self::crearCasillas($id_partida, $numCasillas);
+        self::crearPersonajes($id_partida);
+        $conexion->close();
+        return $id_partida;
+    }
+
+    public static function validarUsuario($email, $passwd) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE email = ? AND contrasena = ?");
+        $hash = md5($passwd);
+        $stmt->bind_param("ss", $email, $hash);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $usuario = $res->fetch_assoc();
+        $stmt->close();
+        return $usuario["id_usuario"] ?? false;
+    }
+
+    private static function crearCasillas($id_partida, $numCasillas) {
+        $conexion = ConexionBBDD::connect();
         for ($i = 1; $i <= $numCasillas; $i++) {
-            $tipo_prueba= self::generarPrueba();
+            $tipo_prueba = self::generarPrueba();
             $esfuerzo = self::generarEsfuerzo();
             $estado = 'oculta';
-
-            $stmtCasilla = $conexion->prepare(
+    
+            $stmt = $conexion->prepare(
                 "INSERT INTO casilla (id_partida, posicion, tipo_prueba, esfuerzo, estado) VALUES (?, ?, ?, ?, ?)"
             );
-            $stmtCasilla->bind_param("iisis", $id_partida, $i, $tipo_prueba, $esfuerzo, $estado);
-            $stmtCasilla->execute();
-            $stmtCasilla->close();
+            $stmt->bind_param("iisis", $id_partida, $i, $tipo_prueba, $esfuerzo, $estado);
+            $stmt->execute();
+            $stmt->close();
         }
+    }
+
+    private static function crearPersonajes($id_partida) {
+        $conexion = ConexionBBDD::connect();
         $heroes_iniciales = [
             ["nombre" => "Gandalf", "habilidad" => "magia", "capacidad" => 50],
             ["nombre" => "Thorin",  "habilidad" => "fuerza", "capacidad" => 50],
@@ -32,15 +56,13 @@ class PartidaDAO {
         ];
     
         foreach ($heroes_iniciales as $h) {
-            $stmtH = $conexion->prepare(
+            $stmt = $conexion->prepare(
                 "INSERT INTO personaje (nombre, tipo_prueba, capacidad_max, id_partida) VALUES (?, ?, ?, ?)"
             );
-            $stmtH->bind_param("ssii", $h["nombre"], $h["habilidad"], $h["capacidad"], $id_partida);
-            $stmtH->execute();
-            $stmtH->close();
+            $stmt->bind_param("ssii", $h["nombre"], $h["habilidad"], $h["capacidad"], $id_partida);
+            $stmt->execute();
+            $stmt->close();
         }
-        $conexion->close();
-        return $id_partida;
     }
 
     private static function generarPrueba() {
@@ -60,16 +82,16 @@ class PartidaDAO {
         return $valores[array_rand($valores)];
     }
 
-    public static function getPartidas($email, $passwd) {
+    public static function getPartidas($id_usuario) {
         $conexion = ConexionBBDD::connect();
     
         $stmt = $conexion->prepare("
             SELECT p.* 
             FROM partida p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE u.email = ? AND u.contrasena = ?
+            WHERE u.Id_usuario = ?
         ");
-        $stmt->bind_param("ss", $email, md5($passwd));
+        $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
         $res = $stmt->get_result();
         $partidas = $res->fetch_all(MYSQLI_ASSOC);
@@ -81,48 +103,22 @@ class PartidaDAO {
     }
     
 
-    public static function getPartida($idPartida, $email) {
+    public static function getPartida($id_partida, $id_usuario) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("
             SELECT p.* 
             FROM partida p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE p.id_partida=? AND u.email=?
+            WHERE p.id_partida=? AND u.id_usuario=?
         ");
-        $stmt->bind_param("is", $idPartida, $email);
+        $stmt->bind_param("is", $id_partida, $id_usuario);
         $stmt->execute();
         $partida = $stmt->get_result()->fetch_assoc();
         $stmt->close();
         $conexion->close();
         return $partida;
     }
-    public static function destaparCasilla($id_partida, $posicion) {
-        $conexion = ConexionBBDD::connect();
-    
-        $stmt = $conexion->prepare("SELECT * FROM casilla WHERE id_partida = ? AND posicion = ?");
-        $stmt->bind_param("ii", $id_partida, $posicion);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $casilla = $res->fetch_assoc();
-        $stmt->close();
-    
-        if (!$casilla) {
-            $conexion->close();
-            return false;
-        }
-    
-        $stmt = $conexion->prepare("UPDATE casilla SET estado = 'descubierta' WHERE id_partida = ? AND posicion = ?");
-        $stmt->bind_param("ii", $id_partida, $posicion);
-        $stmt->execute();
-        $stmt->close();
-
-        
-    
-        $conexion->close();
-        return $casilla;
-    }
-
-
+  
     public static function getCasilla($id_partida, $posicion) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("SELECT tipo_prueba, esfuerzo FROM casilla WHERE id_partida = ? AND posicion = ?");
@@ -142,7 +138,7 @@ class PartidaDAO {
         $res = $stmt->get_result();
     
         $personajes = [];
-        require_once("./Models/personaje.php");
+
         while ($row = $res->fetch_assoc()) {
             $personajes[] = new Personaje($row["nombre"], $row["tipo_prueba"], $row["capacidad_max"]);
         }
@@ -163,10 +159,10 @@ class PartidaDAO {
         $conexion->close();
     }
     
-    public static function marcarCasillaDestapada($id_partida, $posicion) {
+    public static function marcarCasillaDestapada($id_partida, $posicion, $estado) {
         $conexion = ConexionBBDD::connect();
-        $stmt = $conexion->prepare("UPDATE casilla SET estado = 'destapada' WHERE id_partida = ? AND posicion = ?");
-        $stmt->bind_param("ii", $id_partida, $posicion);
+        $stmt = $conexion->prepare("UPDATE casilla SET estado = ? WHERE id_partida = ? AND posicion = ?");
+        $stmt->bind_param("sii", $estado, $id_partida, $posicion);
         $stmt->execute();
         $stmt->close();
         $conexion->close();
@@ -202,25 +198,8 @@ class PartidaDAO {
 
 
     
-    public static function rendirse($email, $passwd, $id_partida) {
+    public static function rendirse($id_usuario, $id_partida) {
         $conexion = ConexionBBDD::connect();
-    
-        $stmt = $conexion->prepare("
-            SELECT p.id_partida 
-            FROM partida p
-            JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE u.email = ? AND u.contrasena = ? AND p.id_partida = ?
-        ");
-        $stmt->bind_param("ssi", $email, md5($passwd), $id_partida);
-        $stmt->execute();
-        $res = $stmt->get_result();
-    
-        if ($res->num_rows === 0) {
-            $stmt->close();
-            $conexion->close();
-            return ["error" => "Usuario o partida no encontrada"];
-        }
-        $stmt->close();
     
         $stmt2 = $conexion->prepare("
             SELECT posicion, tipo_prueba, esfuerzo, estado 
@@ -235,7 +214,7 @@ class PartidaDAO {
     
         $stmt3 = $conexion->prepare("
             UPDATE casilla 
-            SET estado = 'descubierta' 
+            SET estado = 'perdida' 
             WHERE id_partida = ?
         ");
         $stmt3->bind_param("i", $id_partida);
@@ -255,7 +234,100 @@ class PartidaDAO {
     
         return $mapa;
     }
+
+    public static function eliminarPartida($id_partida) {
+        $conexion = ConexionBBDD::connect();
     
+        $stmt = $conexion->prepare("DELETE FROM personaje WHERE id_partida = ?");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $stmt->close();
+    
+        $stmt2 = $conexion->prepare("DELETE FROM casilla WHERE id_partida = ?");
+        $stmt2->bind_param("i", $id_partida);
+        $stmt2->execute();
+        $stmt2->close();
+    
+        $stmt3 = $conexion->prepare("DELETE FROM partida WHERE id_partida = ?");
+        $stmt3->bind_param("i", $id_partida);
+        $stmt3->execute();
+        $stmt3->close();
+    
+        $conexion->close();
+    }
+
+    public static function comprobarEstadoPartida($id_partida) {
+        $conexion = ConexionBBDD::connect();
+    
+        $stmt = $conexion->prepare("SELECT estado FROM partida WHERE id_partida = ?");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $fila = $res->fetch_assoc();
+        $stmt->close();
+        $conexion->close();
+    
+        return  $fila["estado"] ;
+    }
+
+    public static function comprobarGanar($id_partida) {
+        $conexion = ConexionBBDD::connect();
+    
+
+        $stmt = $conexion->prepare("SELECT COUNT(*) AS total FROM casilla WHERE id_partida = ?");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $fila = $res->fetch_assoc();
+        $totalCasillas = (int)$fila['total'];
+        $stmt->close();
+        
+        $stmt = $conexion->prepare("SELECT COUNT(*) AS ganadas FROM casilla WHERE id_partida = ? AND estado = 'ganada'");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $fila = $res->fetch_assoc();
+        $casillasGanadas = (int)$fila['ganadas'];
+        $stmt->close();
+        
+    
+        $conexion->close();
+    
+        return $casillasGanadas > round($totalCasillas / 2);
+    }
+    
+
+    public static function comprobarHeroes($id_partida){
+        $conexion = ConexionBBDD::connect();
+    
+        $stmt = $conexion->prepare("
+            SELECT COUNT(*) as heroes
+            FROM personaje
+            WHERE id_partida = ? AND capacidad_max > 0
+        ");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $fila = $res->fetch_assoc();
+    
+        $stmt->close();
+        $conexion->close();
+    
+        $numHeroesVivos = (int)$fila['heroes'];
+        return $numHeroesVivos > 0;
+    }
+    
+
+    public static function resultadoPartida($id_partida, $estado){
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("UPDATE partida SET estado = ? WHERE id_partida = ?");
+        $stmt->bind_param("si", $estado, $id_partida);
+        $stmt->execute();
+        $stmt->close();
+        $conexion->close();
+    }
+    
+   
     
     
     

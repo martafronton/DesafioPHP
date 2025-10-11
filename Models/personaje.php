@@ -30,6 +30,9 @@ class Personaje {
 
         if ($exito) {
             $this->capacidad -= $esfuerzo;
+            if ($this->capacidad < 0){
+                 $this->capacidad = 0;
+                }
         } else {
             $this->capacidad = 0; 
         }
