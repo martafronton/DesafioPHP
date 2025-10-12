@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $respuesta = ["error" => "No autorizado"];
                 http_response_code(401);
             }
-        }
+        } 
 
     } elseif (($parametros[1] ?? '') === "partidas") {
         if (count($parametros) == 1) { 
@@ -111,6 +111,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             echo json_encode(["error" => "Faltan parámetros para rendirte"]);
         }
         exit;
+    }elseif (($parametros[1] ?? '') === "restablecer") {
+        $email = $d["email"] ?? null; 
+
+        if ($email) {
+            $respuesta = $adminCtrl->restablecerPassword($email);
+            http_response_code(200);
+        } else {
+            $respuesta = ["error" => "Falta el email"];
+            http_response_code(400);
+        }
     }
 }elseif($_SERVER["REQUEST_METHOD"] === "GET") {
     if (($parametros[1] ?? '') === "partida" && count($parametros)==2) {

@@ -102,6 +102,41 @@ class UsuarioDAO {
         $stmt->close();
         return $resultado;
     }
+
+    public function getUsuarioPorEmail($email) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("SELECT * FROM usuario WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+    
+        $usuario = null;
+        if ($fila = $res->fetch_assoc()) {
+            $usuario = [
+                "id" => $fila["id_usuario"],
+                "nombre" => $fila["nombre"],
+                "email" => $fila["email"],
+                "contrasena" => $fila["contrasena"]
+            ];
+        }
+    
+        $stmt->close();
+        $conexion->close();
+        return $usuario;
+    }
+
+    public function actualizarPassword($email, $hash) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("UPDATE usuario SET contrasena = ? WHERE email = ?");
+        $stmt->bind_param("ss", $hash, $email);
+        $resultado = $stmt->execute();
+        if (!$resultado) {
+            return;
+        }
+        $stmt->close();
+        $conexion->close();
+        return $resultado;
+    }
     
     
     
