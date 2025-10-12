@@ -10,8 +10,13 @@ class PartidaController {
     }
 
     public function crearPartida($email, $passwd, $tipo, $numCasillas = 20) {
+        $id_usuario = $this->partidaDAO->validarUsuario($email, $passwd);
         $mensaje="";
-        if ($tipo === "estandar") {
+        $partidas= $this->partidaDAO->getPartidasActivas($id_usuario);
+        if(count($partidas) >= Constantes::PARTIDAS_MAX) {
+            echo json_encode(["error" => "Has alcanzado el número máximo de partidas activas"]);
+            return;
+        }else if ($tipo === "estandar") {
             if ($numCasillas != 20) {
                 $numCasillas = 20;
                 $ajusteMensaje = "El tipo de partida estandar solo puede tener 20 casillas, se ha ajustado el tamaño. ";
@@ -28,7 +33,7 @@ class PartidaController {
             echo json_encode(["error" => "Tipo de partida no válido"]);
             return;
         }
-        $resultado = $this->partidaDAO->insertPartida($email, $passwd, $tipo, $numCasillas);
+        $resultado = $this->partidaDAO->insertPartida($id_usuario, $tipo, $numCasillas);
         if (is_array($resultado) && isset($resultado["error"])) {
             echo json_encode($resultado);
             return;
@@ -67,7 +72,7 @@ class PartidaController {
 
     public function destaparCasilla($email, $passwd, $id_partida, $posicion) {
         $estado= $this->partidaDAO->comprobarEstadoPartida($id_partida);
-        if( $estado !== "en progreso") {
+        if( $estado !== "en_curso") {
             return json_encode(["error" => "La partida está $estado"]);
         }
         $respuesta = [
@@ -89,7 +94,7 @@ class PartidaController {
         }
     
         $casilla = $this->partidaDAO->getCasilla($id_partida, $posicion);
-        if (!$casilla) return json_encode(["error" => "Casilla no encontradaa"]);
+        if (!$casilla) return json_encode(["error" => "Casilla no encontradaa o ya jugada"]);
 
         $personajes = $this->partidaDAO->getPersonajesPorPartida($id_partida);
 

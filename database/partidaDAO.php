@@ -4,9 +4,9 @@ require_once("./Models/personaje.php");
 
 class PartidaDAO {
 
-    public static function insertPartida($email, $passwd, $tipo, $numCasillas) {
-        $conexion = ConexionBBDD::connect();     
-        $id_usuario = self::validarUsuario($email, $passwd);
+    public static function insertPartida($id_usuario, $tipo, $numCasillas) {
+        $conexion = ConexionBBDD::connect(); 
+        $partidas = self::getPartidas($id_usuario);
         $stmt = $conexion->prepare("INSERT INTO partida (id_usuario, tipo) VALUES (?, ?)");
         $stmt->bind_param("is", $id_usuario, $tipo);
         $stmt->execute();
@@ -89,7 +89,27 @@ class PartidaDAO {
             SELECT p.* 
             FROM partida p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE u.Id_usuario = ?
+            WHERE u.id_usuario = ?
+        ");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $partidas = $res->fetch_all(MYSQLI_ASSOC);
+    
+        $stmt->close();
+        $conexion->close();
+    
+        return $partidas;
+    }
+
+    public static function getPartidasActivas($id_usuario) {
+        $conexion = ConexionBBDD::connect();
+    
+        $stmt = $conexion->prepare("
+            SELECT p.* 
+            FROM partida p
+            JOIN usuario u ON p.id_usuario = u.id_usuario
+            WHERE u.id_usuario = ? and p.estado = 'en_curso'
         ");
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
@@ -121,14 +141,24 @@ class PartidaDAO {
   
     public static function getCasilla($id_partida, $posicion) {
         $conexion = ConexionBBDD::connect();
-        $stmt = $conexion->prepare("SELECT tipo_prueba, esfuerzo FROM casilla WHERE id_partida = ? AND posicion = ?");
+    
+        $stmt = $conexion->prepare("SELECT tipo_prueba, esfuerzo, estado FROM casilla WHERE id_partida = ? AND posicion = ?");
         $stmt->bind_param("ii", $id_partida, $posicion);
         $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
+    
+        $res = $stmt->get_result();
+        $fila = $res->fetch_assoc();
+    
         $stmt->close();
         $conexion->close();
-        return $res;
+    
+        if ($fila && $fila["estado"] === "oculta") {
+            return $fila; 
+        } else {
+            return null;
+        }
     }
+    
     
     public static function getPersonajesPorPartida($id_partida) {
         $conexion = ConexionBBDD::connect();
