@@ -6,7 +6,6 @@ class PartidaDAO {
 
     public static function insertPartida($id_usuario, $tipo, $numCasillas) {
         $conexion = ConexionBBDD::connect(); 
-        $partidas = self::getPartidas($id_usuario);
         $stmt = $conexion->prepare("INSERT INTO partida (id_usuario, tipo) VALUES (?, ?)");
         $stmt->bind_param("is", $id_usuario, $tipo);
         $stmt->execute();
@@ -148,7 +147,7 @@ class PartidaDAO {
         }
     }
     
-    
+    //Igual que getHeroes pero devuelve objetos Personaje
     public static function getPersonajesPorPartida($id_partida) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("SELECT nombre, tipo_prueba, capacidad_max FROM personaje WHERE id_partida = ?");
@@ -274,27 +273,6 @@ class PartidaDAO {
         $conexion->close();
     
         return $heroes;
-    }
-
-    public static function eliminarPartida($id_partida) {
-        $conexion = ConexionBBDD::connect();
-    
-        $stmt = $conexion->prepare("DELETE FROM personaje WHERE id_partida = ?");
-        $stmt->bind_param("i", $id_partida);
-        $stmt->execute();
-        $stmt->close();
-    
-        $stmt2 = $conexion->prepare("DELETE FROM casilla WHERE id_partida = ?");
-        $stmt2->bind_param("i", $id_partida);
-        $stmt2->execute();
-        $stmt2->close();
-    
-        $stmt3 = $conexion->prepare("DELETE FROM partida WHERE id_partida = ?");
-        $stmt3->bind_param("i", $id_partida);
-        $stmt3->execute();
-        $stmt3->close();
-    
-        $conexion->close();
     }
 
     public static function comprobarEstadoPartida($id_partida) {

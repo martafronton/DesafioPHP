@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-10-2025 a las 02:49:47
+-- Tiempo de generación: 13-10-2025 a las 22:33:50
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -126,36 +126,66 @@ INSERT INTO `casilla` (`id_casilla`, `id_partida`, `posicion`, `tipo_prueba`, `e
 (83, 6, 13, 'magia', 35, 'perdida'),
 (84, 6, 14, 'magia', 20, 'perdida'),
 (85, 6, 15, 'fuerza', 5, 'perdida'),
-(86, 7, 1, 'fuerza', 35, 'oculta'),
-(87, 7, 2, 'habilidad', 50, 'oculta'),
-(88, 7, 3, 'habilidad', 10, 'oculta'),
-(89, 7, 4, 'magia', 15, 'oculta'),
-(90, 7, 5, 'habilidad', 20, 'oculta'),
-(91, 7, 6, 'habilidad', 25, 'oculta'),
-(92, 7, 7, 'magia', 5, 'oculta'),
-(93, 7, 8, 'magia', 15, 'oculta'),
-(94, 7, 9, 'magia', 5, 'oculta'),
-(95, 7, 10, 'fuerza', 15, 'oculta'),
-(96, 7, 11, 'habilidad', 20, 'oculta'),
-(97, 7, 12, 'magia', 5, 'oculta'),
-(98, 7, 13, 'magia', 10, 'oculta'),
-(99, 7, 14, 'habilidad', 10, 'oculta'),
-(100, 7, 15, 'habilidad', 15, 'oculta'),
-(101, 8, 1, 'habilidad', 15, 'oculta'),
-(102, 8, 2, 'fuerza', 25, 'oculta'),
-(103, 8, 3, 'habilidad', 20, 'oculta'),
-(104, 8, 4, 'magia', 15, 'oculta'),
-(105, 8, 5, 'habilidad', 5, 'oculta'),
-(106, 8, 6, 'magia', 25, 'oculta'),
-(107, 8, 7, 'habilidad', 40, 'oculta'),
-(108, 8, 8, 'habilidad', 20, 'oculta'),
-(109, 8, 9, 'magia', 15, 'oculta'),
-(110, 8, 10, 'magia', 10, 'oculta'),
-(111, 8, 11, 'magia', 20, 'oculta'),
-(112, 8, 12, 'magia', 25, 'oculta'),
-(113, 8, 13, 'magia', 20, 'oculta'),
-(114, 8, 14, 'habilidad', 30, 'oculta'),
-(115, 8, 15, 'magia', 20, 'oculta');
+(86, 7, 1, 'fuerza', 35, 'perdida'),
+(87, 7, 2, 'habilidad', 50, 'perdida'),
+(88, 7, 3, 'habilidad', 10, 'perdida'),
+(89, 7, 4, 'magia', 15, 'perdida'),
+(90, 7, 5, 'habilidad', 20, 'perdida'),
+(91, 7, 6, 'habilidad', 25, 'perdida'),
+(92, 7, 7, 'magia', 5, 'perdida'),
+(93, 7, 8, 'magia', 15, 'perdida'),
+(94, 7, 9, 'magia', 5, 'perdida'),
+(95, 7, 10, 'fuerza', 15, 'perdida'),
+(96, 7, 11, 'habilidad', 20, 'perdida'),
+(97, 7, 12, 'magia', 5, 'perdida'),
+(98, 7, 13, 'magia', 10, 'perdida'),
+(99, 7, 14, 'habilidad', 10, 'perdida'),
+(100, 7, 15, 'habilidad', 15, 'perdida'),
+(101, 8, 1, 'habilidad', 15, 'perdida'),
+(102, 8, 2, 'fuerza', 25, 'perdida'),
+(103, 8, 3, 'habilidad', 20, 'perdida'),
+(104, 8, 4, 'magia', 15, 'perdida'),
+(105, 8, 5, 'habilidad', 5, 'perdida'),
+(106, 8, 6, 'magia', 25, 'perdida'),
+(107, 8, 7, 'habilidad', 40, 'perdida'),
+(108, 8, 8, 'habilidad', 20, 'perdida'),
+(109, 8, 9, 'magia', 15, 'perdida'),
+(110, 8, 10, 'magia', 10, 'perdida'),
+(111, 8, 11, 'magia', 20, 'perdida'),
+(112, 8, 12, 'magia', 25, 'perdida'),
+(113, 8, 13, 'magia', 20, 'perdida'),
+(114, 8, 14, 'habilidad', 30, 'perdida'),
+(115, 8, 15, 'magia', 20, 'perdida'),
+(116, 9, 1, 'fuerza', 25, 'perdida'),
+(117, 9, 2, 'fuerza', 5, 'perdida'),
+(118, 9, 3, 'fuerza', 5, 'perdida'),
+(119, 9, 4, 'fuerza', 10, 'perdida'),
+(120, 9, 5, 'habilidad', 50, 'oculta'),
+(121, 9, 6, 'fuerza', 30, 'ganada'),
+(122, 9, 7, 'habilidad', 50, 'oculta'),
+(123, 9, 8, 'fuerza', 40, 'oculta'),
+(124, 9, 9, 'habilidad', 20, 'perdida'),
+(125, 9, 10, 'habilidad', 10, 'oculta'),
+(126, 9, 11, 'magia', 20, 'oculta'),
+(127, 9, 12, 'magia', 15, 'oculta'),
+(128, 9, 13, 'magia', 15, 'oculta'),
+(129, 9, 14, 'habilidad', 15, 'oculta'),
+(130, 9, 15, 'magia', 15, 'oculta'),
+(131, 10, 1, 'fuerza', 15, 'oculta'),
+(132, 10, 2, 'magia', 10, 'oculta'),
+(133, 10, 3, 'magia', 5, 'oculta'),
+(134, 10, 4, 'habilidad', 40, 'oculta'),
+(135, 10, 5, 'habilidad', 35, 'oculta'),
+(136, 10, 6, 'magia', 5, 'oculta'),
+(137, 10, 7, 'magia', 5, 'oculta'),
+(138, 10, 8, 'magia', 35, 'oculta'),
+(139, 10, 9, 'fuerza', 5, 'oculta'),
+(140, 10, 10, 'magia', 40, 'ganada'),
+(141, 10, 11, 'fuerza', 20, 'oculta'),
+(142, 10, 12, 'fuerza', 20, 'oculta'),
+(143, 10, 13, 'fuerza', 20, 'oculta'),
+(144, 10, 14, 'habilidad', 20, 'oculta'),
+(145, 10, 15, 'habilidad', 40, 'oculta');
 
 -- --------------------------------------------------------
 
@@ -183,8 +213,10 @@ INSERT INTO `partida` (`id_partida`, `id_usuario`, `tipo`, `estado`, `fecha_inic
 (4, 27, 'personalizada', 'rendida', '2025-10-12 23:14:37', 0),
 (5, 27, 'personalizada', 'rendida', '2025-10-12 23:16:06', 0),
 (6, 27, 'personalizada', 'rendida', '2025-10-12 23:16:12', 0),
-(7, 27, 'personalizada', 'en_curso', '2025-10-13 00:03:07', 0),
-(8, 27, 'personalizada', 'en_curso', '2025-10-13 00:32:52', 0);
+(7, 27, 'personalizada', 'rendida', '2025-10-13 00:03:07', 0),
+(8, 27, 'personalizada', 'rendida', '2025-10-13 00:32:52', 0),
+(9, 27, 'personalizada', 'perdida', '2025-10-13 17:53:20', 5),
+(10, 27, 'personalizada', 'en_curso', '2025-10-13 18:52:17', 0);
 
 -- --------------------------------------------------------
 
@@ -226,9 +258,15 @@ INSERT INTO `personaje` (`id_personaje`, `nombre`, `tipo_prueba`, `capacidad_max
 (19, 'Gandalf', 'magia', 50, 7),
 (20, 'Thorin', 'fuerza', 50, 7),
 (21, 'Bilbo', 'habilidad', 50, 7),
-(22, 'Gandalf', 'magia', 50, 8),
+(22, 'Gandalf', 'magia', 25, 8),
 (23, 'Thorin', 'fuerza', 50, 8),
-(24, 'Bilbo', 'habilidad', 50, 8);
+(24, 'Bilbo', 'habilidad', 50, 8),
+(25, 'Gandalf', 'magia', 50, 9),
+(26, 'Thorin', 'fuerza', 0, 9),
+(27, 'Bilbo', 'habilidad', 0, 9),
+(28, 'Gandalf', 'magia', 10, 10),
+(29, 'Thorin', 'fuerza', 50, 10),
+(30, 'Bilbo', 'habilidad', 50, 10);
 
 -- --------------------------------------------------------
 
@@ -271,7 +309,7 @@ INSERT INTO `usuario` (`id_usuario`, `nombre`, `email`, `contrasena`, `fecha_reg
 (1, 'marta', 'marta@example.com', '81dc9bdb52d04dc20036dbd8313ed055', '2025-10-06 04:37:34'),
 (2, 'Michael', 'jackson@.com', '7841c69c19db4d0ac8485467b37e4a3c', '2025-10-07 18:36:42'),
 (3, 'Steven', 'spielberg@.com', '54170f5fc4aeae2957ff71d0041b6046', '2025-10-07 18:49:28'),
-(4, 'Bono', 'u2@.com', '391d906e268623c52e3e4d7257fa14a7', '2025-10-07 19:14:51'),
+(4, 'Bono', 'u2@.com', '60777fea806cc617bf579149cd4dc9a9', '2025-10-07 19:14:51'),
 (7, 'Tom Hanks', 'gump@.com', '57e09186f03a955a27677e50129a00b4', '2025-10-07 19:41:58'),
 (19, 'UsuarioNuevo', 'nuevo@correo.com', '81dc9bdb52d04dc20036dbd8313ed055', '2025-10-08 14:44:07'),
 (21, 'UsuarioNuevo', '@correo.com', '81dc9bdb52d04dc20036dbd8313ed055', '2025-10-08 14:46:47'),
@@ -282,7 +320,8 @@ INSERT INTO `usuario` (`id_usuario`, `nombre`, `email`, `contrasena`, `fecha_reg
 (32, 'Marta', 'marta@correo.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-09 18:09:52'),
 (33, 'Marta', 'martin@correo.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-10 06:41:08'),
 (34, 'Roberto Benigni', 'buongiorno@correo.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-12 21:14:15'),
-(37, 'Roberto Benigni', 'b@correo.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-13 00:01:52');
+(37, 'Roberto Benigni', 'b@correo.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-13 00:01:52'),
+(38, 'Agatha Christie', 'christie@gmail.com', '014436b6640304b2cfad8a43f4aaad1a', '2025-10-13 17:47:12');
 
 -- --------------------------------------------------------
 
@@ -308,7 +347,8 @@ INSERT INTO `usuario_rol` (`id_usuario`, `id_rol`) VALUES
 (32, 1),
 (33, 1),
 (34, 1),
-(37, 2);
+(37, 2),
+(38, 2);
 
 --
 -- Índices para tablas volcadas
@@ -364,19 +404,19 @@ ALTER TABLE `usuario_rol`
 -- AUTO_INCREMENT de la tabla `casilla`
 --
 ALTER TABLE `casilla`
-  MODIFY `id_casilla` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
+  MODIFY `id_casilla` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT de la tabla `partida`
 --
 ALTER TABLE `partida`
-  MODIFY `id_partida` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_partida` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `personaje`
 --
 ALTER TABLE `personaje`
-  MODIFY `id_personaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_personaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -388,7 +428,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- Restricciones para tablas volcadas

@@ -110,6 +110,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $respuesta = ["error" => "Solicitud incorrecta"];
                 http_response_code(400);
             }
+        }elseif (($parametros[2] ?? '') === "activas") {
+            if (count($parametros) == 2) {
+                $respuesta = $partidaCtrl->partidasActivas($d["email"], $d["passwd"]);
+                if (isset($respuesta["error"])) {
+                    http_response_code(401);
+                } else {
+                    http_response_code(200);
+                }
+            } else {
+                $respuesta = ["error" => "Solicitud incorrecta"];
+                http_response_code(400);
+            }
 
         // ----- CREAR PARTIDA -----
         } elseif (($parametros[2] ?? '') === "partida") {
@@ -183,7 +195,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $respuesta = ["error" => "Faltan parámetros para rendirse"];
                 http_response_code(400);
             }
-    }elseif (($parametros[1] ?? '') === "user") {
+    
+
+    }}elseif (($parametros[1] ?? '') === "user") {
 
 
     // ----- RESTABLECER PASSWORD -----
@@ -233,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 http_response_code(400);
             }
         }
-    }
+    
 }
 
 } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {

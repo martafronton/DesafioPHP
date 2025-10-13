@@ -1,0 +1,425 @@
+{
+	"info": {
+		"_postman_id": "ddd92d82-6baf-4d92-a454-e9e589871a8d",
+		"name": "Hobbyte",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48599455"
+	},
+	"item": [
+		{
+			"name": "insertarUsuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"admin\": {\r\n    \"email\": \"admin@.com\",\r\n    \"passwd\": \"1234\"\r\n  },\r\n  \"nuevo\": {\r\n    \"rol\": 2,\r\n    \"nombre\": \"Agatha Christie\",\r\n    \"email\": \"christie@gmail.com\",\r\n    \"passwd\": \"contraseña123\"\r\n  }\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/admin/insertar",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"admin",
+						"insertar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DestaparCasilla",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"usuario\": {\r\n        \"email\": \"admin@.com\",\r\n        \"passwd\": \"1234\"\r\n    },\r\n    \"movimiento\": {\r\n        \"id_partida\": 12,\r\n        \"posicion\": 10\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/destapar",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"destapar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BorrarUsuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"admin\": {\r\n    \"email\": \"admin@.com\",\r\n    \"passwd\": \"1234\"\r\n  },\r\n  \"eliminado\": {\r\n    \"id\": 18\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/admin/eliminar",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"admin",
+						"eliminar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MostrarUsuarios",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@.com\",\r\n    \"passwd\": \"1234\"\r\n  \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/admin/usuarios",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"admin",
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearPartida",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuario\": {\r\n    \"email\": \"admin@.com\",\r\n    \"passwd\": \"1234\"\r\n  },\r\n  \"partida\": {\r\n    \"tipo\": \"personalizada\",\r\n    \"tamanio\": 15\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/partida",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"partida"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MostrarPartidas",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/partidas",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"partidas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rendirse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\",\r\n  \"id_partida\": 8\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/rendirse",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"rendirse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MostrarPartida",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/partida/6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"partida",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RestablecesPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"u2@.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/restablecer",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"restablecer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CambiarNombre",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\",\r\n  \"nuevo_nombre\": \"Rosa\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/nombre",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"nombre"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CambiarPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\",\r\n  \"nuevo_passwd\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/password",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CambiarRol",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"admin\": {\r\n    \"email\": \"admin@.com\",\r\n    \"passwd\": \"1234\"\r\n  },\r\n  \"id_usuario\": 34,\r\n  \"nuevo_rol\": 1\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/admin/rol",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"admin",
+						"rol"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PartidasActivas",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@.com\",\r\n  \"passwd\": \"1234\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/gamer/activas",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"gamer",
+						"activas"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

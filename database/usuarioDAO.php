@@ -119,13 +119,13 @@ class UsuarioDAO {
         $stmt->bind_param("ss", $email, $passwd_md5);
         $stmt->execute();
         $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            if ($row['id_rol'] == 1) {
+        $row = $result->fetch_assoc();
+            if ($row && $row['id_rol'] == 1) {
                 $stmt->close();
                 $conexion->close();
                 return true;
             }
-        }
+        
     
         $stmt->close();
         $conexion->close();
@@ -150,7 +150,7 @@ class UsuarioDAO {
         $resultado = $stmt->execute();
         $stmt->close();
     
-        return $resultado ? "ok" : "error";
+        return $resultado;
     }
     
     
@@ -177,10 +177,10 @@ class UsuarioDAO {
         return $usuario;
     }
 
-    public static function actualizarPassword($email, $hash) {
+    public static function actualizarPassword($email, $password) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("UPDATE usuario SET contrasena = ? WHERE email = ?");
-        $stmt->bind_param("ss", $hash, $email);
+        $stmt->bind_param("ss", $password, $email);
         $resultado = $stmt->execute();
         if (!$resultado) {
             return;
@@ -195,9 +195,6 @@ class UsuarioDAO {
         $stmt = $conexion->prepare("UPDATE usuario SET nombre = ? WHERE id_usuario = ?");
         $stmt->bind_param("si", $nuevoNombre, $id);
         $resultado = $stmt->execute();
-        if (!$resultado) {
-            return;
-        }
         $stmt->close();
         $conexion->close();
         return $resultado;

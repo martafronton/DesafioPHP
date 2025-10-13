@@ -5,9 +5,6 @@ require_once("./Helper/constantes.php");
 
 class PartidaController {
    
-
-
-
     public function crearPartida($email, $passwd, $tipo, $numCasillas = 20) {
         $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
         $mensaje = "";
@@ -16,16 +13,16 @@ class PartidaController {
         if(count($partidas) >= Constantes::PARTIDAS_MAX) {
             return(["error" => "Has alcanzado el número máximo de partidas activas"]);
         }else if ($tipo === "estandar") {
-            if ($numCasillas != 20) {
-                $numCasillas = 20;
+            if ($numCasillas != Constantes::CASILLAS_ESTANDAR) {
+                $numCasillas = Constantes::CASILLAS_ESTANDAR;
                 $ajusteMensaje = "El tipo de partida estandar solo puede tener 20 casillas, se ha ajustado el tamaño. ";
             } 
         } elseif ($tipo === "personalizada") {
-            if ($numCasillas > 100) {
-                $numCasillas = 100;
+            if ($numCasillas > Constantes::MAX_CASILLAS) {
+                $numCasillas = Constantes::MAX_CASILLAS;
                 $ajusteMensaje = "El número máximo de casillas para partidas personalizadas es 100, se ha ajustado el tamaño. ";
-            } elseif ($numCasillas < 1) {
-                $numCasillas = 1;
+            } elseif ($numCasillas < Constantes::MIN_CASILLAS) {
+                $numCasillas = Constantes::MIN_CASILLAS;
                 $ajusteMensaje = "El número mínimo de casillas es 1, se ha ajustado el tamaño. ";
             }
         } else {
@@ -55,10 +52,21 @@ class PartidaController {
             return(["error" => "Usuario o contraseña incorrectos"]);
         }
     if(count(PartidaDAO::getPartidas($id_usuario)) === 0) {
-        return(["mensaje" => "No tienes partidas activas"]);
+        return(["mensaje" => "Todavía no has empezado ninguna partida"]);
     }
     return(PartidaDAO::getPartidas( $id_usuario));
     
+    }
+
+    public function partidasActivas($email, $passwd) {
+        $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
+        if(!$id_usuario) {
+            return(["error" => "Usuario o contraseña incorrectos"]);
+        }
+        if(count(PartidaDAO::getPartidasActivas($id_usuario)) === 0) {
+            return(["mensaje" => "No tienes partidas activas"]);
+        }
+        return(PartidaDAO::getPartidasActivas($id_usuario));
     }
 
     public  function mostrarPartida($id_partida, $email, $passwd) {
@@ -152,6 +160,8 @@ class PartidaController {
             $respuesta["estado_partida"] = "en progreso";
             $respuesta["mensaje"] = "Movimiento realizado";
         }
+
+        $respuesta["heroes"]= PartidaDAO::getHeroes($id_partida);
     
         return ($respuesta);
     }

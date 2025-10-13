@@ -32,10 +32,10 @@ class AdministradorController {
         return UsuarioDAO::esAdmin($email, $passwd);
     }
     public static function borrarUsuario($id){
-        $res = UsuarioDAO::deleteUsuario($id);
-        if ($res === "noexiste") {
+        $respuesta = UsuarioDAO::deleteUsuario($id);
+        if ($respuesta === "noexiste") {
             return ["error" => "El usuario no existe"];
-        } elseif ($res === "ok") {
+        } elseif ($respuesta) {
             return ["mensaje" => "Usuario borrado correctamente"];
         } else {
             return ["error" => "No se ha podido borrar al usuario"];
@@ -50,10 +50,10 @@ class AdministradorController {
         }
     
          $nuevaPassword = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"), 0, 10);
-        $hash = md5($nuevaPassword);
+        $encriptada = md5($nuevaPassword);
     
 
-        $resultado = UsuarioDAO::actualizarPassword($email, $hash);
+        $resultado = UsuarioDAO::actualizarPassword($email, $encriptada);
         if (!$resultado) {
             return(["error" => "No se ha podido actualizar la contraseña."]);
         }
