@@ -19,17 +19,6 @@ class PartidaDAO {
         return $id_partida;
     }
 
-    public static function validarUsuario($email, $passwd) {
-        $conexion = ConexionBBDD::connect();
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE email = ? AND contrasena = ?");
-        $hash = md5($passwd);
-        $stmt->bind_param("ss", $email, $hash);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $usuario = $res->fetch_assoc();
-        $stmt->close();
-        return $usuario["id_usuario"] ?? false;
-    }
 
     private static function crearCasillas($id_partida, $numCasillas) {
         $conexion = ConexionBBDD::connect();
@@ -230,7 +219,10 @@ class PartidaDAO {
     
     public static function rendirse($id_usuario, $id_partida) {
         $conexion = ConexionBBDD::connect();
-    
+        $estado_partida = self::comprobarEstadoPartida($id_partida);
+        if($estado_partida !== "en_curso"){
+            return (["error" => "La partida ya ha finalizado"]);
+        }
         $stmt2 = $conexion->prepare("
             SELECT posicion, tipo_prueba, esfuerzo, estado 
             FROM casilla 
@@ -263,6 +255,25 @@ class PartidaDAO {
         $conexion->close();
     
         return $mapa;
+    }
+
+    public static function getHeroes($id_partida) {
+        $conexion = ConexionBBDD::connect();
+    
+        $stmt = $conexion->prepare("SELECT nombre, tipo_prueba, capacidad_max FROM personaje WHERE id_partida = ?");
+        $stmt->bind_param("i", $id_partida);
+        $stmt->execute();
+        $res = $stmt->get_result();
+    
+        $heroes = [];
+        while ($fila = $res->fetch_assoc()) {
+            $heroes[] = $fila;
+        }
+    
+        $stmt->close();
+        $conexion->close();
+    
+        return $heroes;
     }
 
     public static function eliminarPartida($id_partida) {

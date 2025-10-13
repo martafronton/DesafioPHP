@@ -1,21 +1,20 @@
 <?php
 require_once("./Database/partidaDAO.php");
+require_once("./Database/usuarioDAO.php");
 require_once("./Helper/constantes.php");
 
 class PartidaController {
-    private $partidaDAO;
+   
 
-    public function __construct() {
-        $this->partidaDAO = new PartidaDAO();
-    }
+
 
     public function crearPartida($email, $passwd, $tipo, $numCasillas = 20) {
-        $id_usuario = $this->partidaDAO->validarUsuario($email, $passwd);
-        $mensaje="";
-        $partidas= $this->partidaDAO->getPartidasActivas($id_usuario);
+        $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
+        $mensaje = "";
+        $ajusteMensaje = "";
+        $partidas= PartidaDAO::getPartidasActivas($id_usuario);
         if(count($partidas) >= Constantes::PARTIDAS_MAX) {
-            echo json_encode(["error" => "Has alcanzado el número máximo de partidas activas"]);
-            return;
+            return(["error" => "Has alcanzado el número máximo de partidas activas"]);
         }else if ($tipo === "estandar") {
             if ($numCasillas != 20) {
                 $numCasillas = 20;
@@ -30,19 +29,18 @@ class PartidaController {
                 $ajusteMensaje = "El número mínimo de casillas es 1, se ha ajustado el tamaño. ";
             }
         } else {
-            echo json_encode(["error" => "Tipo de partida no válido"]);
-            return;
+            return(["error" => "Tipo de partida no válido"]);
+            
         }
-        $resultado = $this->partidaDAO->insertPartida($id_usuario, $tipo, $numCasillas);
+        $resultado = PartidaDAO::insertPartida($id_usuario, $tipo, $numCasillas);
         if (is_array($resultado) && isset($resultado["error"])) {
-            echo json_encode($resultado);
-            return;
+            return($resultado);            
         }
     
         $id_partida = $resultado;
         $mensaje = $ajusteMensaje . "Partida creada correctamente";
     
-        echo json_encode([
+        return([
             "mensaje" => $mensaje,
             "id_partida" => $id_partida,
             "tipo" => $tipo,
@@ -52,28 +50,41 @@ class PartidaController {
     
 
     public function mostrarPartidas($email, $passwd) {
-        $id_usuario = $this->partidaDAO->validarUsuario($email, $passwd);
+        $id_usuario =UsuarioDAO::validarUsuario($email, $passwd);
         if(!$id_usuario) {
-            echo json_encode(["error" => "Usuario o contraseña incorrectos"]);
-            return;
+            return(["error" => "Usuario o contraseña incorrectos"]);
         }
-    echo json_encode($this->partidaDAO->getPartidas( $id_usuario));
+    if(count(PartidaDAO::getPartidas($id_usuario)) === 0) {
+        return(["mensaje" => "No tienes partidas activas"]);
+    }
+    return(PartidaDAO::getPartidas( $id_usuario));
     
     }
 
-    public function mostrarPartida($id_partida, $email, $passwd) {
-        $id_usuario = $this->partidaDAO->validarUsuario($email, $passwd);
+    public  function mostrarPartida($id_partida, $email, $passwd) {
+        $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
         if(!$id_usuario) {
-            echo json_encode(["error" => "Usuario o contraseña incorrectos"]);
-            return;
+            return(["error" => "Usuario o contraseña incorrectos"]);
         }
-    echo json_encode($this->partidaDAO->getPartida($id_partida, $id_usuario));
+    $partida=(PartidaDAO::getPartida($id_partida, $id_usuario));
+    if($partida==null) {
+        return (["error" => "La partida no existe"]);
     }
+    return $partida;
+}
 
     public function destaparCasilla($email, $passwd, $id_partida, $posicion) {
-        $estado= $this->partidaDAO->comprobarEstadoPartida($id_partida);
+        $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
+        if(!$id_usuario) {
+            return (["error" => "Usuario o contraseña incorrectos"]);
+        }
+        $existe = PartidaDAO::getPartida($id_partida, $id_usuario);
+        if(!$existe) {
+            return (["error" => "La partida no existe"]);
+        }
+        $estado= PartidaDAO::comprobarEstadoPartida($id_partida);
         if( $estado !== "en_curso") {
-            return json_encode(["error" => "La partida está $estado"]);
+            return (["error" => "La partida está $estado"]);
         }
         $respuesta = [
             "mensaje" => "",
@@ -84,19 +95,19 @@ class PartidaController {
             "estado_partida" => null
         ];
     
-        $intentos = $this->partidaDAO->getIntentos($id_partida);
+        $intentos = PartidaDAO::getIntentos($id_partida);
         if($intentos >= Constantes::INTENTOS_MAX) {
-            return json_encode(["error" => "Has superado el número máximo de intentos"]);
+            return (["error" => "Has superado el número máximo de intentos"]);
         }
     
-        if(!$this->partidaDAO->comprobarHeroes($id_partida)) {
-            return json_encode(["error" => "Te has quedado sin héroes"]);
+        if(!PartidaDAO::comprobarHeroes($id_partida)) {
+            return (["error" => "Te has quedado sin héroes"]);
         }
     
-        $casilla = $this->partidaDAO->getCasilla($id_partida, $posicion);
-        if (!$casilla) return json_encode(["error" => "Casilla no encontradaa o ya jugada"]);
+        $casilla = PartidaDAO::getCasilla($id_partida, $posicion);
+        if (!$casilla) return (["error" => "Casilla no encontradaa o ya jugada"]);
 
-        $personajes = $this->partidaDAO->getPersonajesPorPartida($id_partida);
+        $personajes = PartidaDAO::getPersonajesPorPartida($id_partida);
 
     
         
@@ -107,53 +118,61 @@ class PartidaController {
                 $resultado = $p->enfrentarPrueba($casilla["esfuerzo"]);
                 $estado = $resultado ? "ganada" : "perdida";
     
-                $this->partidaDAO->actualizarCapacidadPersonaje($p, $id_partida);
-                $this->partidaDAO->marcarCasillaDestapada($id_partida, $posicion, $estado);
+                PartidaDAO::actualizarCapacidadPersonaje($p, $id_partida);
+                PartidaDAO::marcarCasillaDestapada($id_partida, $posicion, $estado);
     
-                if(!$resultado) $this->partidaDAO->sumarIntentos($id_partida);
+                if(!$resultado) PartidaDAO::sumarIntentos($id_partida);
     
                 $respuesta["personaje"] = $p->getNombre();
                 $respuesta["resultado"] = $resultado ? "superada" : "fallada";
                 $respuesta["capacidad_restante"] = $p->getCapacidad();
-                $respuesta["intentos"] = $this->partidaDAO->getIntentos($id_partida);
+                $respuesta["intentos"] = PartidaDAO::getIntentos($id_partida);
     
                 $heroe_enfrentado = true;
             }
         }
     
         if(!$heroe_enfrentado){
-            return json_encode(["error" => "Ningún héroe puede afrontar esta prueba"]);
+            return (["error" => "Ningún héroe puede afrontar esta prueba"]);
         }
 
-        $intentos = $this->partidaDAO->getIntentos($id_partida);
-        $partida_ganada = $this->partidaDAO->comprobarGanar($id_partida);
-        $heroes_vivos = $this->partidaDAO->comprobarHeroes($id_partida);
+        $intentos = PartidaDAO::getIntentos($id_partida);
+        $partida_ganada = PartidaDAO::comprobarGanar($id_partida);
+        $heroes_vivos =PartidaDAO::comprobarHeroes($id_partida);
     
         if($partida_ganada && $heroes_vivos){
             $respuesta["estado_partida"] = "ganada";
             $respuesta["mensaje"] = "¡Has ganado la partida!";
-            $this->partidaDAO->resultadoPartida($id_partida, "ganada");
+            PartidaDAO::resultadoPartida($id_partida, "ganada");
         } elseif(!$heroes_vivos || $intentos >= Constantes::INTENTOS_MAX){
             $respuesta["estado_partida"] = "perdida";
             $respuesta["mensaje"] = "Has perdido la partida";
-            $this->partidaDAO->resultadoPartida($id_partida, "perdida");
+            PartidaDAO::resultadoPartida($id_partida, "perdida");
         } else {
             $respuesta["estado_partida"] = "en progreso";
             $respuesta["mensaje"] = "Movimiento realizado";
         }
     
-        return json_encode($respuesta);
+        return ($respuesta);
     }
     
 
 
     public function rendirse($email, $passwd, $id_partida) {
-        $id_usuario = $this->partidaDAO->validarUsuario($email, $passwd);
+        $id_usuario = UsuarioDAO::validarUsuario($email, $passwd);
         if(!$id_usuario) {
-            echo json_encode(["error" => "Usuario o contraseña incorrectos"]);
-            return;
+            return (["error" => "Usuario o contraseña incorrectos"]);
         }
-        echo json_encode($this->partidaDAO->rendirse($id_usuario, $id_partida));
+        $partida = PartidaDAO::rendirse($id_usuario, $id_partida);
+        if(isset($partida["error"])) {
+            return (["error" => $partida["error"]]);
+        }
+        $heroes  = PartidaDAO::getHeroes($id_partida);
+    
+        return [
+            "partida" => $partida,
+            "heroes"  => $heroes
+        ];
     }
     
 }

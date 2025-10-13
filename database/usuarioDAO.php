@@ -18,6 +18,18 @@ class UsuarioDAO {
         $conexion->close();
         return $usuarios;
     }
+
+    public static function validarUsuario($email, $passwd) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE email = ? AND contrasena = ?");
+        $hash = md5($passwd);
+        $stmt->bind_param("ss", $email, $hash);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $usuario = $res->fetch_assoc();
+        $stmt->close();
+        return $usuario["id_usuario"] ?? false;
+    }
     
 
     public static function getUsuario($id) {
@@ -41,30 +53,59 @@ class UsuarioDAO {
         $conexion->close();
         return $usuario;
     }
+
+    
     
 
 
     public static function insertUsuario($rol, $nombre, $email, $passwd) {
         $conexion = ConexionBBDD::connect();
+    
+  
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+    
+        if ($res->num_rows > 0) {
+            $stmt->close();
+            $conexion->close();
+            return "duplicado";
+        }
+        $stmt->close();
+    
+  
         $stmt = $conexion->prepare("INSERT INTO usuario(nombre, email, contrasena) VALUES(?, ?, ?)");
         $stmt->bind_param("sss", $nombre, $email, $passwd);
-        if(!$stmt->execute()) {
-            die("Error insert usuario: " . $stmt->error);
+    
+        if (!$stmt->execute()) {
+            $stmt->close();
+            $conexion->close();
+            return false; 
         }
+    
         $id_usuario = $stmt->insert_id;
         $stmt->close();
+    
+
         $stmt2 = $conexion->prepare("INSERT INTO usuario_rol(id_usuario, id_rol) VALUES(?, ?)");
         $stmt2->bind_param("ii", $id_usuario, $rol);
-        if(!$stmt2->execute()) {
-            die("Error insert usuario_rol: " . $stmt2->error);
-        }
-        $stmt2->close();
     
+        if (!$stmt2->execute()) {
+            $stmt2->close();
+            $conexion->close();
+            return false;
+        }
+    
+        $stmt2->close();
         $conexion->close();
-        return $id_usuario;
+    
+        return $id_usuario; 
     }
     
-    function esAdmin($email, $passwd) {
+    
+    
+    public static function esAdmin($email, $passwd) {
         $passwd_md5 = md5($passwd);
     
         $conexion = ConexionBBDD::connect();
@@ -91,19 +132,30 @@ class UsuarioDAO {
         return false;
     }
 
-    function deleteUsuario($id){
+    public static function deleteUsuario($id){
         $conexion = ConexionBBDD::connect();
+    
+        $stmt = $conexion->prepare('SELECT * FROM usuario WHERE id_usuario = ?');
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $stmt->close();
+    
+        if ($res->num_rows === 0) {
+            return "noexiste";
+        }
+    
         $stmt = $conexion->prepare('DELETE FROM usuario WHERE id_usuario = ?');
         $stmt->bind_param("i", $id);
         $resultado = $stmt->execute();
-        if (!$resultado) {
-            die("Error borrando al usuario: " . $stmt->error);
-        }
         $stmt->close();
-        return $resultado;
+    
+        return $resultado ? "ok" : "error";
     }
+    
+    
 
-    public function getUsuarioPorEmail($email) {
+    public static function getUsuarioPorEmail($email) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("SELECT * FROM usuario WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -125,10 +177,36 @@ class UsuarioDAO {
         return $usuario;
     }
 
-    public function actualizarPassword($email, $hash) {
+    public static function actualizarPassword($email, $hash) {
         $conexion = ConexionBBDD::connect();
         $stmt = $conexion->prepare("UPDATE usuario SET contrasena = ? WHERE email = ?");
         $stmt->bind_param("ss", $hash, $email);
+        $resultado = $stmt->execute();
+        if (!$resultado) {
+            return;
+        }
+        $stmt->close();
+        $conexion->close();
+        return $resultado;
+    }
+
+    public static function cambiarNombre($id, $nuevoNombre) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("UPDATE usuario SET nombre = ? WHERE id_usuario = ?");
+        $stmt->bind_param("si", $nuevoNombre, $id);
+        $resultado = $stmt->execute();
+        if (!$resultado) {
+            return;
+        }
+        $stmt->close();
+        $conexion->close();
+        return $resultado;
+    }
+
+    public static function cambiarRol($id, $nuevoRol) {
+        $conexion = ConexionBBDD::connect();
+        $stmt = $conexion->prepare("UPDATE usuario_rol SET id_rol = ? WHERE id_usuario = ?");
+        $stmt->bind_param("ii", $nuevoRol, $id);
         $resultado = $stmt->execute();
         if (!$resultado) {
             return;
